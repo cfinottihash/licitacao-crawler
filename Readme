@@ -1,1 +1,11 @@
+### Import-crawler NCM 85371030
 
+Este repositório baixa todo mês o arquivo oficial do ComexStat (IMP_\<ano>.csv), filtra o NCM 85371030 (religadores), agrega por ano-mês e grava `data/processed/import_85371030.parquet`.  
+O workflow `comex-pipeline` roda dia 2 de cada mês e faz commit automático do Parquet atualizado.
+
+Para rodar local:
+
+```bash
+pip install -r requirements.txt
+python src/fetch.py
+python src/transform.py
