@@ -1,23 +1,29 @@
 name: comex-pipeline
 on:
   schedule:
-    - cron: '15 8 2 * *'   # roda dia 2, 05:15-BRT
+    - cron: '15 8 2 * *'
   workflow_dispatch:
+
+permissions:               # ← adicione esta seção
+  contents: write           # libera push
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # necessário para poder dar push de volta
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install -r requirements.txt
       - run: python src/fetch.py
       - run: python src/transform.py
-      - run: |
-          git config user.name github-actions
-          git config user.email actions@github.com
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
           git add data/processed/import_85371030.parquet
           git commit -m "auto-update $(date -u '+%F')" || exit 0
           git push
